@@ -30,6 +30,7 @@ try {
 
 async function run() {
     core.exportVariable('HAB_NONINTERACTIVE', 'true');
+    core.exportVariable('HAB_BLDR_URL', 'https://bldr.biome.sh');
     core.exportVariable('STUDIO_TYPE', 'default');
 
 
@@ -39,17 +40,19 @@ async function run() {
     };
 
 
-    if (await io.which('hab')) {
-        core.info('Chef Habitat already installed!');
+    if (await io.which('bio')) {
+        core.info('Biome already installed!');
     } else {
-        // install hab binary and bootstrap /hab environment
+        // install bio binary and bootstrap /hab environment
         try {
-            core.startGroup('Installing Chef Habitat');
-            await exec('wget https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh -O /tmp/hab-install.sh');
-            await exec('sudo bash /tmp/hab-install.sh');
-            await io.rmRF('/tmp/hab-install.sh');
+            core.startGroup('Installing Biome');
+            await exec('wget https://github.com/biome-sh/biome/releases/download/v1.6.372/bio-1.6.372-x86_64-linux.tar.gz');
+            await exec('tar xf bio-1.6.372-x86_64-linux.tar.gz');
+            await exec('sudo mv bio /usr/bin')
+            await exec('sudo chmod +x /usr/bin/bio')
+            await io.rmRF('bio-1.6.372-x86_64-linux.tar.gz');
         } catch (err) {
-            core.setFailed(`Failed to install Chef Habitat: ${err.message}`);
+            core.setFailed(`Failed to install Biome: ${err.message}`);
             return;
         } finally {
             core.endGroup();
@@ -72,9 +75,9 @@ async function run() {
 
         // verify installation (and initialize license)
         try {
-            await exec('hab --version');
+            await exec('bio --version');
         } catch (err) {
-            core.setFailed(`Failed to verify hab installation: ${err.message}`);
+            core.setFailed(`Failed to verify bio installation: ${err.message}`);
             return;
         }
 
@@ -147,7 +150,7 @@ async function run() {
     if (deps.length) {
         try {
             core.startGroup(`Installing deps: ${deps.join(' ')}`);
-            await exec('sudo --preserve-env hab pkg install', deps, { env: habEnv });
+            await exec('sudo --preserve-env bio pkg install', deps, { env: habEnv });
         } catch (err) {
             core.setFailed(`Failed to install deps: ${err.message}`);
             return;
@@ -162,7 +165,7 @@ async function run() {
         try {
             core.startGroup('Starting supervisor');
             await exec(`sudo mkdir -p /hab/sup/default`);
-            await exec('sudo --preserve-env setsid bash', ['-c', 'hab sup run > /hab/sup/default/sup.log 2>&1 &'], { env: habEnv });
+            await exec('sudo --preserve-env setsid bash', ['-c', 'bio sup run > /hab/sup/default/sup.log 2>&1 &'], { env: habEnv });
 
             core.info('Waiting for supervisor secret...');
             await exec('bash', ['-c', 'until test -f /hab/sup/default/CTL_SECRET; do echo -n "."; sleep .1; done; echo']);
@@ -172,7 +175,7 @@ async function run() {
             await exec('sudo chmod g+r /hab/sup/default/CTL_SECRET');
 
             core.info('Waiting for supervisor...');
-            await exec('bash', ['-c', 'until hab svc status; do echo -n "."; sleep .1; done; echo']);
+            await exec('bash', ['-c', 'until bio svc status; do echo -n "."; sleep .1; done; echo']);
         } catch (err) {
             core.setFailed(`Failed to start supervisor: ${err.message}`);
             return;
@@ -184,7 +187,7 @@ async function run() {
             for (const svc of supervisor) {
                 try {
                     core.startGroup(`Loading service: ${svc}`);
-                    await exec(`hab svc load ${svc}`, [], { env: habEnv });
+                    await exec(`bio svc load ${svc}`, [], { env: habEnv });
                 } catch (err) {
                     core.setFailed(`Failed to load service: ${err.message}`);
                     return;

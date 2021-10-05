@@ -1,6 +1,6 @@
-# habitat-action
+# biome-action
 
-A GitHub action that sets up your workflow runner to use Chef Habitat
+A GitHub action that sets up your workflow runner to use Biome
 
 ## Usage
 
@@ -8,42 +8,40 @@ A GitHub action that sets up your workflow runner to use Chef Habitat
 
 ```yaml
 
-name: Build with Chef Habitat
+name: Build with Biome
 on:
   push:
     branches:
       - master
 jobs:
-  habitat-build:
+  biome-build:
     runs-on: ubuntu-latest
     steps:
-    - name: Initialize Chef Habitat artifacts cache directory
+    - name: Initialize Biome artifacts cache directory
       run: |
         sudo mkdir -p /hab/cache/artifacts
         sudo chown runner:docker -R /hab
-    - name: Cache Chef Habitat artifacts
+    - name: Cache Biome artifacts
       uses: actions/cache@v1
       with:
         path: /hab/cache/artifacts
         key: hab-cache-artifacts
 
-    - name: 'Initialize Chef Habitat environment'
-      uses: JarvusInnovations/habitat-action@action/v1
-      env:
-        HAB_LICENSE: accept
+    - name: 'Initialize Biome environment'
+      uses: 1729/biome-action@action/v1
       with:
         deps: |
           core/git
-          core/hab-studio
+          core/bio-studio
         # supervisor: true
-        supervisor: |
-          core/mysql
-          emergence/php-runtime --bind="database:mysql.default"
-          emergence/nginx --bind="backend:php-runtime.default"
+        #supervisor: |
+        #  core/mysql
+        #  emergence/php-runtime --bind="database:mysql.default"
+        #  emergence/nginx --bind="backend:php-runtime.default"
 
-    - run: hab pkg exec core/git git clone https://github.com/JarvusInnovations/habitat-compose
-    - run: hab origin key generate jarvus
-    - run: hab pkg build ./habitat-compose/
+    - run: bio pkg exec core/git git clone https://github.com/JarvusInnovations/habitat-compose
+    - run: bio origin key generate jarvus
+    - run: bio pkg build ./habitat-compose/
       env:
         HAB_ORIGIN: jarvus
     # - name: Open tmate/tmux session for remote debug shell
@@ -65,9 +63,9 @@ Then, in your action, you can do this:
 ```javascript
 async function run() {
     try {
-        await require('habitat-action');
+        await require('biome-action');
     } catch (err) {
-        core.setFailed(`Failed to run habitat-action: ${err.message}`);
+        core.setFailed(`Failed to run biome-action: ${err.message}`);
         return;
     }
 

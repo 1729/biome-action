@@ -1,21 +1,21 @@
 {
-  "name": "habitat-action",
+  "name": "biome-action",
   "version": "1.0.0",
-  "description": "A GitHub action that sets up your workflow runner to use Chef Habitat",
+  "description": "A GitHub action that sets up your workflow runner to use Biome",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JarvusInnovations/habitat-action.git"
+    "url": "git+https://github.com/1729/biome-action.git"
   },
-  "author": "Chris Alfano <chris@jarv.us>",
+  "author": "Greg Fodor <gfodor@1729.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/JarvusInnovations/habitat-action/issues"
+    "url": "https://github.com/1729/biome-action/issues"
   },
-  "homepage": "https://github.com/JarvusInnovations/habitat-action#readme",
+  "homepage": "https://github.com/1729/biome-action#readme",
   "dependencies": {
     "@actions/cache": "^1.0.7",
     "@actions/core": "^1.4.0",

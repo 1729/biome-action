@@ -1,5 +1,5 @@
-name: 'Chef Habitat Runner'
-description: 'Set up the runner environment to use Chef Habitat'
+name: 'Biomes Runner'
+description: 'Set up the runner environment to use Biome'
 inputs:
     deps:
       description: 'One or more package to install'
