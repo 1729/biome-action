@@ -46,7 +46,7 @@ async function run() {
         // install bio binary and bootstrap /hab environment
         try {
             core.startGroup('Installing Biome');
-            await exec('wget https://github.com/biome-sh/biome/releases/download/v1.6.300/bio-1.6.300-x86_64-linux.tar.gz');
+            await exec('wget https://github.com/biome-sh/biome/releases/download/1.6.300/bio-1.6.300-x86_64-linux.tar.gz');
             await exec('tar xf bio-1.6.300-x86_64-linux.tar.gz');
             await exec('sudo mv bio /usr/bin')
             await exec('sudo chmod +x /usr/bin/bio')
